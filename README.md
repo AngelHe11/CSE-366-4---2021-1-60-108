@@ -13,12 +13,16 @@ class Environment:
         for obstacle in self.obstacles:
             self.grid[obstacle[0]][obstacle[1]] = 1
 
-    def display(self, agent_position=None):
+    def display(self, agent_position=None, agent_battery=None):
         grid_copy = [row[:] for row in self.grid]  # Create a copy to avoid modifying the original grid
         if agent_position:
             x, y = agent_position
             grid_copy[x][y] = 2  # Mark agent's position on the grid
         plt.imshow(grid_copy, cmap='binary')
+
+        if agent_battery is not None:
+            plt.text(self.grid_size - 1.5, self.grid_size - 0.5, f'Battery: {agent_battery}', color='red', fontsize=12)
+
         plt.title('Grid Environment')
         plt.show()
 
@@ -62,10 +66,10 @@ class Simulation:
             directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # Possible movement directions
             direction = random.choice(directions)
             self.agent.move(direction)
-            self.environment.display(agent_position=self.agent.position)  # Display the environment with the agent's position
+            self.environment.display(agent_position=self.agent.position, agent_battery=self.agent.check_battery())  # Display the environment with the agent's position and battery level
 
     def visualize(self):
-        self.environment.display(agent_position=self.agent.position)  # Display the final environment after simulation
+        self.environment.display(agent_position=self.agent.position, agent_battery=self.agent.check_battery())  # Display the final environment after simulation
 
 class PathfindingAlgorithms:
     def __init__(self, environment):
@@ -83,4 +87,3 @@ if __name__ == "__main__":
     simulation = Simulation()
     simulation.run()
     simulation.visualize()
-    
